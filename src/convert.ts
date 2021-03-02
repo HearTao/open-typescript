@@ -49,6 +49,11 @@ function handler() {
             return result;
         });
 
+        const outputDir = path.dirname(outputPath);
+        if (!fs.existsSync(outputDir)) {
+            fs.mkdirSync(outputDir);
+        }
+
         fs.writeFileSync(outputPath, results.join("\n"));
         console.log(`Combined: [${outputPath}]`);
     };

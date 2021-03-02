@@ -1,0 +1,25 @@
+{
+  "name": "open-typescript",
+  "version": "0.0.1",
+  "types": "./libs/index.d.ts",
+  "repository": "git@github.com:HearTao/open-typescript.git",
+  "author": "kingwl <kingwenlu@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "typescript": "^4.2.2",
+    "yargs": "^16.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.31",
+    "@types/yargs": "^16.0.0",
+    "prettier": "^2.2.1"
+  },
+  "scripts": {
+    "build": "tsc",
+    "lint": "prettier -c --config ./prettier.config.js ./src/**/*.{ts,tsx}",
+    "prettier": "yarn lint --write"
+  },
+  "files": [
+    "libs"
+  ]
+}

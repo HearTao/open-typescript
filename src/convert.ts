@@ -75,7 +75,7 @@ function main() {
         })
         .option("o", {
             alias: "output",
-            describe: "Output directory",
+            describe: "Output file path",
             type: "string",
             requiresArg: true
         })

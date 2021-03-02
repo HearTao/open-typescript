@@ -11,37 +11,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-      with:
-        path: /main
-    - uses: actions/checkout@v2
-      with:
-        repository: microsoft/TypeScript
-        path: /ts
     - name: Use Node.js 12.x
       uses: actions/setup-node@v1
       with:
         node-version: 12.x
     - name: Install yarn
       run: npm install -g yarn
-    - name: Bootstrap TypeScript
-      run: yarn
-      working-directory: /ts
     - name: Bootstrap Script
       run: yarn
-      working-directory: /main
     - name: Build Script
       run: yarn build
+    - uses: actions/checkout@v2
+      with:
+        repository: microsoft/TypeScript
+        path: ts
+    - name: Bootstrap TypeScript
+      run: yarn
+      working-directory: ./ts
     - name: Rewrite TypeScript Config
-      run: node ./dist/rewrite.js /ts
-      working-directory: /main
+      run: node ./dist/rewrite.js ./ts
     - name: Build TypeScript
       run: yarn gulp local
-      working-directory: /ts
+      working-directory: ./ts
     - name: Convert libs
-      run: node ./dist/convert.js /ts/built/local -o ./libs/index.d.ts
-      working-directory: /main
+      run: node ./dist/convert.js ./ts/built/local -o ./libs/index.d.ts
     - name: Upload build
       uses: actions/upload-artifact@v2
       with:
         name: libs
-        path: /main/dist
+        path: /libs

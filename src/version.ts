@@ -29,7 +29,10 @@ function handler() {
         console.log(`Write version: [${inputPackageJsonPath}]`);
         const outputContent = fs.readFileSync(outputPackageJsonPath).toString();
         const outputPackageJson = JSON.parse(outputContent);
-        outputPackageJson.version = inputPackageJson.version;
+        const now = new Date();
+        outputPackageJson.version = `${
+            inputPackageJson.version
+        }-dev.${now.getFullYear()}${now.getMonth() + 1}${now.getDate()}`;
         fs.writeFileSync(
             outputPackageJsonPath,
             JSON.stringify(outputPackageJson, undefined, 4)

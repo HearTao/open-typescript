@@ -30,9 +30,13 @@ function handler() {
         const outputContent = fs.readFileSync(outputPackageJsonPath).toString();
         const outputPackageJson = JSON.parse(outputContent);
         const now = new Date();
-        outputPackageJson.version = `${
-            inputPackageJson.version
-        }-dev.${now.getFullYear()}${now.getMonth() + 1}${now.getDate()}`;
+        const localeDateString = now.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-dight"
+        });
+        const [month, date, year] = localeDateString.split("/");
+        outputPackageJson.version = `${inputPackageJson.version}-dev.${year}${month}${date}`;
         fs.writeFileSync(
             outputPackageJsonPath,
             JSON.stringify(outputPackageJson, undefined, 4)

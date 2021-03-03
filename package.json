@@ -1,6 +1,7 @@
 {
   "name": "open-typescript",
   "version": "0.0.1",
+  "main": "./index.js",
   "types": "./libs/index.d.ts",
   "repository": "git@github.com:HearTao/open-typescript.git",
   "author": "kingwl <kingwenlu@gmail.com>",
@@ -18,6 +19,7 @@
     "prettier": "yarn lint --write"
   },
   "files": [
-    "libs"
+    "libs",
+    "index.js"
   ]
 }

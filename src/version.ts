@@ -33,7 +33,7 @@ function handler() {
         const localeDateString = now.toLocaleDateString("en-US", {
             year: "numeric",
             month: "2-digit",
-            day: "2-dight"
+            day: "2-digit"
         });
         const [month, date, year] = localeDateString.split("/");
         outputPackageJson.version = `${inputPackageJson.version}-dev.${year}${month}${date}`;

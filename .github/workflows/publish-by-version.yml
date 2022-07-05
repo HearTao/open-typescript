@@ -1,0 +1,46 @@
+name: Publish By Input Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "A valid ref(hash/tags/branch) on TypeScript, eg: v4.6.3, main"
+        required: true
+        default: 'main'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js 16.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 16.x
+    - name: Install yarn
+      run: npm install -g yarn
+    - name: Bootstrap Script
+      run: yarn
+    - name: Build Script
+      run: yarn build
+    - uses: actions/checkout@v2
+      with:
+        repository: microsoft/TypeScript
+        ref: ${{ github.event.inputs.ref }}
+        path: ts
+    - name: Bootstrap TypeScript
+      run: yarn
+      working-directory: ./ts
+    - name: Rewrite TypeScript Config
+      run: node ./dist/rewrite.js ./ts
+    - name: Build TypeScript
+      run: yarn gulp local
+      working-directory: ./ts
+    - name: Convert libs
+      run: node ./dist/convert.js ./ts/built/local -o ./libs/index.d.ts
+    - name: Rewrite version
+      run: node ./dist/version.js ./ts -o .
+    - name: Publish
+      uses: JS-DevTools/npm-publish@v1
+      with:
+        token: ${{ secrets.NPM_TOKEN }}

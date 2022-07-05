@@ -44,3 +44,17 @@ jobs:
       uses: JS-DevTools/npm-publish@v1
       with:
         token: ${{ secrets.NPM_TOKEN }}
+    - name: Adding GITHUB_STEP_SUMMARY
+      if: success()
+      run: |
+        CURRENT_VERSION=$(node -p 'require("./package.json").version')
+        echo '### Released :rocket:' $CURRENT_VERSION >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        echo $CURRENT_VERSION >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        echo 'user input ref:' $INPUT_REF >> $GITHUB_STEP_SUMMARY
+        echo '```log' >> $GITHUB_STEP_SUMMARY
+        git log --oneline -1 >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+      env:
+        INPUT_REF: ${{ github.event.inputs.ref }}

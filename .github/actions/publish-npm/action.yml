@@ -1,0 +1,73 @@
+name: "Publish By Input Version"
+description: Publish By Input Version
+
+inputs:
+  ref:
+    description: "A valid ref(hash/tags/branch) on TypeScript, eg: v4.6.3, main"
+    required: true
+    default: 'main'
+
+  distTag:
+    description: "distTag"
+    required: true
+    default: 'dev'
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js 16.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 16.x
+    - name: Install yarn
+      run: npm install -g yarn
+      shell: bash
+    - name: Bootstrap Script
+      run: yarn
+      shell: bash
+    - name: Build Script
+      run: yarn build
+      shell: bash
+    - uses: actions/checkout@v2
+      with:
+        repository: microsoft/TypeScript
+        ref: ${{ inputs.ref }}
+        path: ts
+    - name: Bootstrap TypeScript
+      run: yarn
+      working-directory: ./ts
+      shell: bash
+    - name: Rewrite TypeScript Config
+      shell: bash
+      run: node ./dist/rewrite.js ./ts
+    - name: Build TypeScript
+      shell: bash
+      run: yarn gulp local
+      working-directory: ./ts
+    - name: Convert libs
+      shell: bash
+      run: node ./dist/convert.js ./ts/built/local -o ./libs/index.d.ts
+    - name: Rewrite version
+      shell: bash
+      run: node ./dist/version.js ./ts -o .
+    - name: Publish
+      uses: JS-DevTools/npm-publish@v1
+      with:
+        token: ${{ secrets.NPM_TOKEN }}
+        tag: ${{ inputs.distTag }}
+    - name: Adding GITHUB_STEP_SUMMARY
+      shell: bash
+      if: success()
+      run: |
+        CURRENT_VERSION=$(node -p 'require("./package.json").version')
+        echo '### Released :rocket:' $CURRENT_VERSION >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        echo $CURRENT_VERSION >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        echo 'user input ref:' $INPUT_REF >> $GITHUB_STEP_SUMMARY
+        echo '```log' >> $GITHUB_STEP_SUMMARY
+        git log --oneline -1 >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+      env:
+        INPUT_REF: ${{ inputs.ref }}

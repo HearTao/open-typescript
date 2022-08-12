@@ -1,7 +1,4 @@
-# Dev version will include time info
-# For example: 4.7.2-dev.20220812
-
-name: Publish By Input Version As dev Tag
+name: Release As Latest Tag
 
 on:
   workflow_dispatch:
@@ -18,5 +15,5 @@ jobs:
       - name: Publish latest tag
         uses: ./.github/actions/publish-npm
         with:
-          distTag: "dev"
+          distTag: "latest"
           ref: ${{ github.event.inputs.ref }}

@@ -20,4 +20,5 @@ jobs:
         uses: ./.github/actions/publish-npm
         with:
           distTag: "dev"
+          npmToken: ${{ secrets.NPM_TOKEN }}
           ref: ${{ github.event.inputs.ref }}

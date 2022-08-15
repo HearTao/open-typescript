@@ -6,7 +6,9 @@ inputs:
     description: "A valid ref(hash/tags/branch) on TypeScript, eg: v4.6.3, main"
     required: true
     default: 'main'
-
+  npmToken:
+    description: "NPM Token"
+    required: true
   distTag:
     description: "distTag"
     required: true
@@ -54,7 +56,7 @@ runs:
     - name: Publish
       uses: JS-DevTools/npm-publish@v1
       with:
-        token: ${{ secrets.NPM_TOKEN }}
+        token: ${{ inputs.npmToken }}
         tag: ${{ inputs.distTag }}
     - name: Adding GITHUB_STEP_SUMMARY
       shell: bash

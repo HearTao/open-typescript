@@ -18,3 +18,4 @@ jobs:
         with:
           distTag: "latest"
           ref: ${{ github.event.inputs.ref }}
+          npmToken: ${{ secrets.NPM_TOKEN }}

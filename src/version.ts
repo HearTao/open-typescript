@@ -5,12 +5,14 @@ import * as yargs from "yargs";
 interface Argv {
     input: string;
     output: string;
+    distTag: "dev" | "latest";
 }
 
 function handler() {
     return function handler1(argv: yargs.Arguments<Argv>): void {
         const inputPath = argv.input;
         const outputPath = argv.output;
+        const distTag = argv.distTag;
 
         const inputPackageJsonPath = path.join(inputPath, "package.json");
         if (!fs.existsSync(inputPackageJsonPath)) {
@@ -22,21 +24,28 @@ function handler() {
             throw new Error("Output must have package.json");
         }
 
-        console.log(`Read version: [${inputPackageJsonPath}]`);
         const inputContent = fs.readFileSync(inputPackageJsonPath).toString();
         const inputPackageJson = JSON.parse(inputContent);
+        console.log(`Read version: [${inputPackageJsonPath}]: ${inputPackageJson.version}`);
 
-        console.log(`Write version: [${inputPackageJsonPath}]`);
+        console.log(`Write version: [${outputPackageJsonPath}]`);
         const outputContent = fs.readFileSync(outputPackageJsonPath).toString();
         const outputPackageJson = JSON.parse(outputContent);
-        const now = new Date();
-        const localeDateString = now.toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit"
-        });
-        const [month, date, year] = localeDateString.split("/");
-        outputPackageJson.version = `${inputPackageJson.version}-dev.${year}${month}${date}`;
+        let version = inputPackageJson.version;
+        if (distTag === "dev") {
+            const now = new Date();
+            const localeDateString = now.toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit"
+            });
+            const [month, date, year] = localeDateString.split("/");
+            version = `${inputPackageJson.version}-dev.${year}${month}${date}`;
+        }
+
+        outputPackageJson.version = version;
+        console.log(`target version: ${version}`);
+
         fs.writeFileSync(
             outputPackageJsonPath,
             JSON.stringify(outputPackageJson, undefined, 4)
@@ -64,6 +73,12 @@ function main() {
             describe: "Output directory",
             type: "string",
             requiresArg: true
+        })
+        .option("dist-tag", {
+            describe:
+                "dev or latest, version of dist-tag will has current date information",
+            type: "string",
+            default: "dev"
         })
         .version()
         .alias("v", "version")

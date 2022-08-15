@@ -15,6 +15,7 @@
   },
   "scripts": {
     "build": "tsc",
+    "watch": "tsc -w",
     "lint": "prettier -c --config ./prettier.config.js ./src/**/*.{ts,tsx}",
     "prettier": "yarn lint --write"
   },

@@ -12,6 +12,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - name: Publish latest tag
         uses: ./.github/actions/publish-npm
         with:

@@ -52,7 +52,7 @@ runs:
       run: node ./dist/convert.js ./ts/built/local -o ./libs/index.d.ts
     - name: Rewrite version
       shell: bash
-      run: node ./dist/version.js ./ts -o .
+      run: node ./dist/version.js ./ts -o . --dist-tag ${{ inputs.distTag }}
     - name: Publish
       uses: JS-DevTools/npm-publish@v1
       with:

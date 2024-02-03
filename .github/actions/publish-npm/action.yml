@@ -42,7 +42,7 @@ runs:
       run: node ./src/rewrite.mjs ./ts
     - name: Build TypeScript
       shell: bash
-      run: yarn build
+      run: npm run build
       working-directory: ./ts
     - name: Convert libs
       shell: bash

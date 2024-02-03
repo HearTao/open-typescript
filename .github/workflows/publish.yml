@@ -24,17 +24,17 @@ jobs:
         repository: microsoft/TypeScript
         path: ts
     - name: Bootstrap TypeScript
-      run: yarn
+      run: npm install
       working-directory: ./ts
     - name: Rewrite TypeScript Config
-      run: node ./dist/rewrite.js ./ts
+      run: node ./src/rewrite.mjs ./ts
     - name: Build TypeScript
-      run: yarn gulp local
+      run: yarn build
       working-directory: ./ts
     - name: Convert libs
-      run: node ./dist/convert.js ./ts/built/local -o ./libs/index.d.ts
+      run: node ./src/convert.mjs ./ts/built/local -o ./libs/index.d.ts
     - name: Rewrite version
-      run: node ./dist/version.js ./ts -o .
+      run: node ./src/version.mjs ./ts -o .
     - name: Publish
       uses: JS-DevTools/npm-publish@v1
       with:

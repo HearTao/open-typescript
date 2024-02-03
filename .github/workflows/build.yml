@@ -11,30 +11,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Use Node.js 16.x
+    - name: Use Node.js 18.x
       uses: actions/setup-node@v1
       with:
-        node-version: 16.x
+        node-version: 18.x
     - name: Install yarn
       run: npm install -g yarn
     - name: Bootstrap Script
       run: yarn
-    - name: Build Script
-      run: yarn build
     - uses: actions/checkout@v2
       with:
         repository: microsoft/TypeScript
         path: ts
     - name: Bootstrap TypeScript
-      run: yarn
+      run: npm install
       working-directory: ./ts
     - name: Rewrite TypeScript Config
-      run: node ./dist/rewrite.js ./ts
+      run: node ./src/rewrite.mjs ./ts
     - name: Build TypeScript
-      run: yarn gulp local
+      run: yarn build
       working-directory: ./ts
     - name: Convert libs
-      run: node ./dist/convert.js ./ts/built/local -o ./libs/index.d.ts
+      run: node ./src/convert.mjs ./ts/built/local -o ./libs/index.d.ts
     - name: Upload build
       uses: actions/upload-artifact@v2
       with:

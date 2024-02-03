@@ -18,18 +18,15 @@ runs:
   using: "composite"
   steps:
     - uses: actions/checkout@v2
-    - name: Use Node.js 16.x
+    - name: Use Node.js 18.x
       uses: actions/setup-node@v1
       with:
-        node-version: 16.x
+        node-version: 18.x
     - name: Install yarn
       run: npm install -g yarn
       shell: bash
     - name: Bootstrap Script
       run: yarn
-      shell: bash
-    - name: Build Script
-      run: yarn build
       shell: bash
     - uses: actions/checkout@v2
       with:
@@ -37,22 +34,22 @@ runs:
         ref: ${{ inputs.ref }}
         path: ts
     - name: Bootstrap TypeScript
-      run: yarn
+      run: npm install
       working-directory: ./ts
       shell: bash
     - name: Rewrite TypeScript Config
       shell: bash
-      run: node ./dist/rewrite.js ./ts
+      run: node ./src/rewrite.mjs ./ts
     - name: Build TypeScript
       shell: bash
-      run: yarn gulp local
+      run: yarn build
       working-directory: ./ts
     - name: Convert libs
       shell: bash
-      run: node ./dist/convert.js ./ts/built/local -o ./libs/index.d.ts
+      run: node ./src/convert.mjs ./ts/built/local -o ./libs/index.d.ts
     - name: Rewrite version
       shell: bash
-      run: node ./dist/version.js ./ts -o . --dist-tag ${{ inputs.distTag }}
+      run: node ./src/version.mjs ./ts -o . --dist-tag ${{ inputs.distTag }}
     - name: Publish
       uses: JS-DevTools/npm-publish@v1
       with:
